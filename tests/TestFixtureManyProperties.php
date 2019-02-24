@@ -51,24 +51,4 @@ class TestFixtureManyProperties
             'testMixedWriteProperty' => &$this->testMixedWriteProperty,
         ];
     }
-
-    public function __get($name)
-    {
-        ;
-    }
-
-    public function __isset($name): bool
-    {
-        ;
-    }
-
-    public function __set($name, $value)
-    {
-
-    }
-
-    public function __unset($name)
-    {
-
-    }
 }

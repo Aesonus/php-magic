@@ -21,14 +21,6 @@ trait HasMagicProperties
 
     protected $definedProperties;
 
-    abstract public function __get($name);
-
-    abstract public function __set($name, $value);
-
-    abstract public function __isset($name);
-
-    abstract public function __unset($name);
-
     public function magicGet($name)
     {
         if (key_exists($name, $this->getParsedDocBlock()) &&

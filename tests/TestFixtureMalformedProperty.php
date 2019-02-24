@@ -18,24 +18,5 @@ namespace Aesonus\Tests;
 class TestFixtureMalformedProperty
 {
     use \Aesonus\PhpMagic\HasMagicProperties;
-    
-    public function __get($name)
-    {
 
-    }
-
-    public function __isset($name)
-    {
-
-    }
-
-    public function __set($name, $value)
-    {
-
-    }
-
-    public function __unset($name)
-    {
-
-    }
 }

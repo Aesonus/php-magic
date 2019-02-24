@@ -210,6 +210,7 @@ class HasMagicPropertiesTest extends BaseTestCase
             ['testStdClassOrNullWriteProperty'],
             ['testMixedWriteProperty'],
         ];
+        
     }
 
     /**
