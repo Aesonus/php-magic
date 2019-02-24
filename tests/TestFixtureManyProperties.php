@@ -21,7 +21,7 @@ use Aesonus\PhpMagic\HasMagicProperties;
  * @property-write mixed $testMixedWriteProperty
  * @author Aesonus <corylcomposinger at gmail.com>
  */
-class TestFixture
+class TestFixtureManyProperties
 {
     use HasMagicProperties;
 

@@ -18,19 +18,19 @@ use stdClass;
  * Tests the magic properties class
  * @author Aesonus <corylcomposinger at gmail.com>
  */
-class TestHasMagicProperties extends BaseTestCase
+class HasMagicPropertiesTest extends BaseTestCase
 {
 
     /**
      *
-     * @var TestFixture|MockObject
+     * @var TestFixtureManyProperties|MockObject
      */
     public $testObj;
 
     protected function setUp(): void
     {
 
-        $this->testObj = new TestFixture();
+        $this->testObj = new TestFixtureManyProperties();
     }
 
     private function setProperty($property, $value)
@@ -57,7 +57,7 @@ class TestHasMagicProperties extends BaseTestCase
     public function magicGetThrowsExceptionIfPropertyNotAccessible($property)
     {
         $this->expectException(\Error::class);
-        $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixture::$' . $property);
+        $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixtureManyProperties::$' . $property);
         $this->testObj->magicGet($property);
     }
 
@@ -106,7 +106,7 @@ class TestHasMagicProperties extends BaseTestCase
     public function magicIssetThrowsExceptionIfPropertyNotAccessible($property)
     {
         $this->expectException(\Error::class);
-        $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixture::$' . $property);
+        $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixtureManyProperties::$' . $property);
         $this->testObj->magicIsset($property);
     }
 
@@ -184,7 +184,7 @@ class TestHasMagicProperties extends BaseTestCase
     public function magicSetThrowsErrorIfPropertyNotAccessible($property)
     {
         $this->expectException(\Error::class);
-        $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixture::$' . $property);
+        $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixtureManyProperties::$' . $property);
         $this->testObj->magicSet($property, 'non consequential value');
     }
 
@@ -219,7 +219,7 @@ class TestHasMagicProperties extends BaseTestCase
     public function magicUnsetThrowsErrorIfPropertyNotAccessible($property)
     {
         $this->expectException(\Error::class);
-        $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixture::$' . $property);
+        $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixtureManyProperties::$' . $property);
         $this->testObj->magicUnset($property);
     }
 
@@ -232,5 +232,15 @@ class TestHasMagicProperties extends BaseTestCase
             ['testIntReadProperty'],
             ['notAProperty']
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function testInvalidPropertyTypeThrowsRuntimeException()
+    {
+        $testObj = new TestFixtureMalformedProperty;
+        $this->expectException(\RuntimeException::class);
+        $testObj->magicGet('name');
     }
 }
