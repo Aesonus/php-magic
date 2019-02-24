@@ -1,0 +1,23 @@
+{
+    "name": "aesonus/php-magic",
+    "description": "Reads the class docblock to determine magic method behavior",
+    "authors": [
+        {
+            "name": "Aesonus",
+            "email": "corylcomposinger@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "jan-swiecki/simple-annotations": "0.3.1"
+    },
+    "require-dev": {
+        "aesonus/test-lib": "v3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aesonus\\PhpMagic\\": "src/",
+            "Aesonus\\Tests\\": "tests/"
+        }
+    }
+}
