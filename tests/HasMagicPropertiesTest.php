@@ -27,6 +27,21 @@ class HasMagicPropertiesTest extends BaseTestCase
      */
     public $testObj;
 
+    /**
+     * The methods used by the TestFixtureUsingMethods object
+     * @var array
+     */
+    public $magicByMethodsMethods = [
+        '__setProperty',
+        '__unsetProperty',
+        '__getProperty',
+        '__issetProperty',
+        '__unsetWrite',
+        '__setWrite',
+        '__issetRead',
+        '__getRead'
+    ];
+
     protected function setUp(): void
     {
 
@@ -50,6 +65,65 @@ class HasMagicPropertiesTest extends BaseTestCase
         $this->assertEquals($expected, $actual);
     }
 
+    private function setUpMagicByMethods()
+    {
+        $this->testObj = $this->getMockBuilder(TestFixtureUsingMethods::class)
+                ->setMethods($this->magicByMethodsMethods)->getMock();
+    }
+
+    private function expectNoMethodCalls()
+    {
+        foreach ($this->magicByMethodsMethods as $method) {
+            $this->testObj->expects($this->never())->method($method);
+        }
+    }
+
+    /**
+     * @test
+     * @dataProvider validMagicGetUsingMethodsDataProvider
+     */
+    public function magicGetCalls__getPropertyUsingMethods($property)
+    {
+        $this->setUpMagicByMethods();
+        $this->testObj->expects($this->once())->method("__get" . ucfirst($property))->with();
+        $this->testObj->magicGet($property);
+    }
+
+    /**
+     * @test
+     * @dataProvider invalidMagicGetUsingMethodsDataProvider
+     */
+    public function magicGetCallsNoMethodIfPropertyNotAccessibleUsingMethods($property)
+    {
+        $this->setUpMagicByMethods();
+        $this->expectException(\Error::class);
+        //Expect no method calls to any getter or setter
+        $this->expectNoMethodCalls();
+        $t = $this->testObj->magicGet($property);
+    }
+
+    /**
+     * Data Provider
+     */
+    public function validMagicGetUsingMethodsDataProvider()
+    {
+        return [
+            ['property'],
+            ['read']
+        ];
+    }
+
+    /**
+     * Data Provider
+     */
+    public function invalidMagicGetUsingMethodsDataProvider()
+    {
+        return [
+            ['nope'],
+            ['write']
+        ];
+    }
+
     /**
      * @test
      * @dataProvider invalidReadPropertyDataProvider
@@ -59,6 +133,22 @@ class HasMagicPropertiesTest extends BaseTestCase
         $this->expectException(\Error::class);
         $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixtureManyProperties::$' . $property);
         $this->testObj->magicGet($property);
+    }
+
+    /**
+     * Data Provider
+     */
+    public function validMagicGetDataProvider()
+    {
+        return [
+            ['testStringOrNullProperty', 'string value'],
+            ['testStringOrNullProperty', null],
+            ['testFloatOrStringProperty', 'string value'],
+            ['testFloatOrStringProperty', 3.14159],
+            ['testIntReadProperty', 23],
+            ['testCallableOrObjectReadProperty', 'is_int'],
+            ['testCallableOrObjectReadProperty', new stdClass()],
+        ];
     }
 
     /**
@@ -111,20 +201,30 @@ class HasMagicPropertiesTest extends BaseTestCase
     }
 
     /**
-     * Data Provider
+     * @test
+     * @dataProvider validMagicGetUsingMethodsDataProvider
      */
-    public function validMagicGetDataProvider()
+    public function magicIssetCalls__issetPropertyUsingMethods($property)
     {
-        return [
-            ['testStringOrNullProperty', 'string value'],
-            ['testStringOrNullProperty', null],
-            ['testFloatOrStringProperty', 'string value'],
-            ['testFloatOrStringProperty', 3.14159],
-            ['testIntReadProperty', 23],
-            ['testCallableOrObjectReadProperty', 'is_int'],
-            ['testCallableOrObjectReadProperty', new stdClass()],
-        ];
+        $this->setUpMagicByMethods();
+        $this->testObj->expects($this->once())->method("__isset" . ucfirst($property))
+            ->with()->willReturn(true);
+        $this->testObj->magicIsset($property);
     }
+
+    /**
+     * @test
+     * @dataProvider invalidMagicGetUsingMethodsDataProvider
+     */
+    public function magicIssetCallsNoMethodIfPropertyNotAccessibleUsingMethods($property)
+    {
+        $this->setUpMagicByMethods();
+        $this->expectException(\Error::class);
+        //Expect no method calls to any getter or setter
+        $this->expectNoMethodCalls();
+        $t = $this->testObj->magicIsset($property);
+    }
+
 
     /**
      * @test
@@ -190,6 +290,76 @@ class HasMagicPropertiesTest extends BaseTestCase
 
     /**
      * @test
+     * @dataProvider validMagicSetUsingMethodsDataProvider
+     */
+    public function magicSetCalls__setPropertyUsingMethods($property, $value)
+    {
+        $this->setUpMagicByMethods();
+        $this->testObj->expects($this->once())->method("__set" . ucfirst($property))->with();
+        $this->testObj->magicSet($property, $value);
+    }
+
+    /**
+     * @test
+     * @dataProvider invalidMagicSetUsingMethodsDataProvider
+     */
+    public function magicSetCallsNoMethodIfPropertyNotAccessibleUsingMethods($property)
+    {
+        $this->setUpMagicByMethods();
+        $this->expectException(\Error::class);
+        //Expect no method calls to any getter or setter
+        $this->expectNoMethodCalls();
+        $t = $this->testObj->magicSet($property, "doesn't matter");
+    }
+
+    /**
+     * Data Provider
+     */
+    public function validMagicSetUsingMethodsDataProvider()
+    {
+        return [
+            ['property', 'test string'],
+            ['write', true]
+        ];
+    }
+
+    /**
+     * Data Provider
+     */
+    public function invalidMagicSetUsingMethodsDataProvider()
+    {
+        return [
+            ['nope'],
+            ['read']
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider validMagicSetUsingMethodsDataProvider
+     */
+    public function magicUnsetCalls__unsetPropertyUsingMethods($property)
+    {
+        $this->setUpMagicByMethods();
+        $this->testObj->expects($this->once())->method("__unset" . ucfirst($property))->with();
+        $this->testObj->magicUnset($property);
+    }
+
+    /**
+     * @test
+     * @dataProvider invalidMagicSetUsingMethodsDataProvider
+     */
+    public function magicUnsetCallsNoMethodIfPropertyNotAccessibleUsingMethods($property)
+    {
+        $this->setUpMagicByMethods();
+        $this->expectException(\Error::class);
+        //Expect no method calls to any getter or setter
+        $this->expectNoMethodCalls();
+        $t = $this->testObj->magicUnset($property);
+    }
+
+    /**
+     * @test
      * @dataProvider validUnSetPropertyDataProvider
      */
     public function magicUnsetUnsetsTheProperty($property)
@@ -210,7 +380,6 @@ class HasMagicPropertiesTest extends BaseTestCase
             ['testStdClassOrNullWriteProperty'],
             ['testMixedWriteProperty'],
         ];
-        
     }
 
     /**

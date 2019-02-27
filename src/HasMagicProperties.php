@@ -23,8 +23,15 @@ trait HasMagicProperties
 
     public function magicGet($name)
     {
+        $method = function ($name) {
+            return '__get'. ucfirst($name);
+        };
+
         if (key_exists($name, $this->getParsedDocBlock()) &&
             in_array($this->getParsedDocBlock()[$name]['access'], ['property', 'property-read'])) {
+            if (method_exists($this, $method($name))) {
+                return $this->{$method($name)}();
+            }
             return $this->$name;
         } else {
             $this->throwUndefinedPropertyException($name);
@@ -33,11 +40,19 @@ trait HasMagicProperties
 
     public function magicSet($name, $value)
     {
+        $method = function ($name) {
+            return '__set'. ucfirst($name);
+        };
+
         if (key_exists($name, $this->getParsedDocBlock()) &&
             in_array($this->getParsedDocBlock()[$name]['access'], ['property', 'property-write'])) {
             //Check the types too
             if (!$this->validateTypes($value, $this->getParsedDocBlock()[$name]['types'])) {
                 throw new \TypeError(__METHOD__.": Property '$$name' must be of type(s) ". implode('|', $this->getParsedDocBlock()[$name]['types']));
+            }
+            if (method_exists($this, $method($name))) {
+                $this->{$method($name)}($value);
+                return ;
             }
             $this->$name = $value;
         } else {
@@ -47,8 +62,15 @@ trait HasMagicProperties
 
     public function magicIsset($name): bool
     {
+        $method = function ($name) {
+            return '__isset'. ucfirst($name);
+        };
+
         if (key_exists($name, $this->getParsedDocBlock()) &&
             in_array($this->getParsedDocBlock()[$name]['access'], ['property', 'property-read'])) {
+            if (method_exists($this, $method($name))) {
+                return $this->{$method($name)}();
+            }
             return isset($this->$name);
         } else {
             $this->throwUndefinedPropertyException($name);
@@ -57,8 +79,14 @@ trait HasMagicProperties
 
     public function magicUnset($name)
     {
+        $method = function ($name) {
+            return '__unset'. ucfirst($name);
+        };
         if (key_exists($name, $this->getParsedDocBlock()) &&
             in_array($this->getParsedDocBlock()[$name]['access'], ['property', 'property-write'])) {
+            if (method_exists($this, $method($name))) {
+                return $this->{$method($name)}();
+            }
             $this->$name = null;
         } else {
             $this->throwUndefinedPropertyException($name);
