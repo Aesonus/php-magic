@@ -1,0 +1,17 @@
+{
+  "name": "php-magic",
+  "version": "1.0.0",
+  "description": "Menu business logic",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Cory Laughlin <corylcomposinger@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^4.0.0"
+  }
+}

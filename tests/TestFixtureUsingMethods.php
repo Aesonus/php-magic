@@ -23,24 +23,20 @@ class TestFixtureUsingMethods
 {
     use HasMagicProperties;
 
-    public function __getRead()
+    protected function __getRead()
     {
-
     }
 
-    public function __issetRead()
+    protected function __issetRead()
     {
-
     }
 
-    public function __setWrite($value)
+    protected function __setWrite($value)
     {
-
     }
 
-    public function __unsetWrite()
+    protected function __unsetWrite()
     {
-
     }
 
     /**
@@ -48,18 +44,16 @@ class TestFixtureUsingMethods
      * @param mixed $value
      * @return void
      */
-    public function __setProperty($value): void
+    protected function __setProperty($value): void
     {
-
     }
 
     /**
      * This tells the self::magicUnset() method to unset the property using this method
      * @return void
      */
-    public function __unsetProperty(): void
+    protected function __unsetProperty(): void
     {
-
     }
 
     /**
@@ -67,16 +61,14 @@ class TestFixtureUsingMethods
      *
      * @return bool
      */
-    public function __issetProperty(): bool
+    protected function __issetProperty(): bool
     {
-
     }
 
     /**
      * This tells the self::magicGet() method to get the property using this method
      */
-    public function __getProperty()
+    protected function __getProperty()
     {
-
     }
 }

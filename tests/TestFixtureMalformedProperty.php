@@ -18,5 +18,4 @@ namespace Aesonus\Tests;
 class TestFixtureMalformedProperty
 {
     use \Aesonus\PhpMagic\HasMagicProperties;
-
 }

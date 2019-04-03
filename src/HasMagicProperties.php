@@ -18,7 +18,6 @@ use DocBlockReader\Reader;
  */
 trait HasMagicProperties
 {
-
     protected $definedProperties;
 
     public function magicGet($name)
@@ -114,25 +113,27 @@ trait HasMagicProperties
 
     protected function getParsedDocBlock(): array
     {
+        $allowed_annotations = [
+                    'property',
+                    'property-read',
+                    'property-write'
+                ];
         if (!isset($this->definedProperties)) {
-            $parser = $this->getParserObject();
-            $allowed_annotations = [
-                'property',
-                'property-read',
-                'property-write'
-            ];
-            $parameters = array_filter($parser->getParameters(), function ($value) use ($allowed_annotations) {
-                return in_array($value, $allowed_annotations);
-            }, ARRAY_FILTER_USE_KEY);
             $this->definedProperties = [];
-            foreach ($parameters as $access => $docs) {
-                if (!is_array($docs)) {
-                    $docs = [$docs];
+            foreach ($this->getParserObjects() as $parser) {
+
+                $parameters = array_filter($parser->getParameters(), function ($value) use ($allowed_annotations) {
+                    return in_array($value, $allowed_annotations);
+                }, ARRAY_FILTER_USE_KEY);
+                foreach ($parameters as $access => $docs) {
+                    if (!is_array($docs)) {
+                        $docs = [$docs];
+                    }
+                    $this->definedProperties = array_merge(
+                        $this->definedProperties,
+                        $this->getPropertyInfo($access, $docs)
+                    );
                 }
-                $this->definedProperties = array_merge(
-                    $this->definedProperties,
-                    $this->getPropertyInfo($access, $docs)
-                );
             }
         }
         return $this->definedProperties;
@@ -173,8 +174,8 @@ trait HasMagicProperties
      * This method can be overridden, but be aware that you may have to override
      * the getParsedDocBlock method too
      */
-    protected function getParserObject()
+    protected function getParserObjects()
     {
-        return new Reader(get_class());
+        return [new Reader(get_class())];
     }
 }

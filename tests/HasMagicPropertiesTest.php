@@ -44,7 +44,6 @@ class HasMagicPropertiesTest extends BaseTestCase
 
     protected function setUp(): void
     {
-
         $this->testObj = new TestFixtureManyProperties();
     }
 
