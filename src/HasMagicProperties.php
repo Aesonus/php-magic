@@ -169,12 +169,12 @@ trait HasMagicProperties
     }
 
     /**
-     * This method gets the parsing object.
+     * This method gets the parsing object(s).
      *
-     * This method can be overridden, but be aware that you may have to override
-     * the getParsedDocBlock method too
+     * This method can be overridden. See HasInheritedMagicProperties.php to see a use case.
+     * @return array
      */
-    protected function getParserObjects()
+    protected function getParserObjects(): array
     {
         return [new Reader(get_class())];
     }
