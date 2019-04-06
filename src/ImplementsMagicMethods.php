@@ -23,8 +23,8 @@ trait ImplementsMagicMethods
     protected function checkIfHasMagicProperties()
     {
         $uses = class_uses(get_class());
-        if (in_array(HasMagicProperties::class, $uses)
-            || in_array(HasInheritedMagicProperties::class, $uses)) {
+        if (!in_array(HasMagicProperties::class, $uses)
+            && !in_array(HasInheritedMagicProperties::class, $uses)) {
             throw new RuntimeException(__CLASS__ . ": Class does not use " . HasMagicProperties::class . " or descendant");
         }
     }

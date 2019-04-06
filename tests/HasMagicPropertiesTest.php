@@ -60,7 +60,7 @@ class HasMagicPropertiesTest extends BaseTestCase
     {
         //Setup fixture
         $this->setProperty($property, $expected);
-        $actual = $this->testObj->magicGet($property);
+        $actual = $this->testObj->$property;
         $this->assertEquals($expected, $actual);
     }
 
@@ -131,7 +131,7 @@ class HasMagicPropertiesTest extends BaseTestCase
     {
         $this->expectException(\Error::class);
         $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixtureManyProperties::$' . $property);
-        $this->testObj->magicGet($property);
+        $this->testObj->$property;
     }
 
     /**
@@ -170,7 +170,7 @@ class HasMagicPropertiesTest extends BaseTestCase
         //Setup fixture
         $this->setProperty($property, $value);
 
-        $this->assertTrue($this->testObj->magicIsset($property));
+        $this->assertTrue(isset($this->testObj->$property));
     }
 
     /**
@@ -196,7 +196,7 @@ class HasMagicPropertiesTest extends BaseTestCase
     {
         $this->expectException(\Error::class);
         $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixtureManyProperties::$' . $property);
-        $this->testObj->magicIsset($property);
+        isset($this->testObj->$property);
     }
 
     /**
@@ -231,7 +231,7 @@ class HasMagicPropertiesTest extends BaseTestCase
      */
     public function magicSetSetsTheProperty($property, $expected)
     {
-        $this->testObj->magicSet($property, $expected);
+        $this->testObj->$property = $expected;
 
         $this->assertEquals($expected, $this->testObj->propertyReferences[$property]);
     }
@@ -260,7 +260,7 @@ class HasMagicPropertiesTest extends BaseTestCase
         $this->expectException(\TypeError::class);
         $this->expectExceptionMessage("Aesonus\PhpMagic\HasMagicProperties::magicSet: Property "
             . "'$$property' must be of type(s)");
-        $this->testObj->magicSet($property, $bad_type);
+        $this->testObj->$property = $bad_type;
     }
 
     /**
@@ -284,7 +284,7 @@ class HasMagicPropertiesTest extends BaseTestCase
     {
         $this->expectException(\Error::class);
         $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixtureManyProperties::$' . $property);
-        $this->testObj->magicSet($property, 'non consequential value');
+        $this->testObj->$property = 'non consequential value';
     }
 
     /**
@@ -364,7 +364,7 @@ class HasMagicPropertiesTest extends BaseTestCase
     public function magicUnsetUnsetsTheProperty($property)
     {
         $this->testObj->propertyReferences[$property] = 'not gonna be here for long';
-        $this->testObj->magicUnset($property);
+        unset($this->testObj->$property);
         $this->assertNull($this->testObj->propertyReferences[$property]);
     }
 
@@ -389,7 +389,7 @@ class HasMagicPropertiesTest extends BaseTestCase
     {
         $this->expectException(\Error::class);
         $this->expectExceptionMessage('Undefined property: Aesonus\Tests\TestFixtureManyProperties::$' . $property);
-        $this->testObj->magicUnset($property);
+        unset($this->testObj->$property);
     }
 
     /**

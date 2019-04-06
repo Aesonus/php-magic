@@ -18,7 +18,7 @@ trait HasInheritedMagicProperties
 {
     use HasMagicProperties;
 
-    protected function getParserObjects()
+    protected function getParserObjects(): array
     {
         $class = get_class();
         $parsers = [new \DocBlockReader\Reader($class)];

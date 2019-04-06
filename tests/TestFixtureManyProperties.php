@@ -24,6 +24,7 @@ use Aesonus\PhpMagic\HasMagicProperties;
 class TestFixtureManyProperties
 {
     use HasMagicProperties;
+    use \Aesonus\PhpMagic\ImplementsMagicMethods;
 
     /**
      * @var array Use to access the protected properties on this object. For
