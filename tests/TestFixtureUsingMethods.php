@@ -15,7 +15,7 @@ use Aesonus\PhpMagic\HasMagicProperties;
 /**
  * You should write tests for all of your property methods!
  * @property string $property
- * @property-read int $read
+ * @property-read int $read_property
  * @property-write bool $write
  * @author Aesonus <corylcomposinger at gmail.com>
  */
@@ -23,11 +23,11 @@ class TestFixtureUsingMethods
 {
     use HasMagicProperties;
 
-    protected function __getRead()
+    protected function __getReadProperty()
     {
     }
 
-    protected function __issetRead()
+    protected function __issetReadProperty()
     {
     }
 

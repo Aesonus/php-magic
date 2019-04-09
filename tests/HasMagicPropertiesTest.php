@@ -108,7 +108,7 @@ class HasMagicPropertiesTest extends BaseTestCase
     {
         return [
             ['property'],
-            ['read']
+            ['read_property']
         ];
     }
 

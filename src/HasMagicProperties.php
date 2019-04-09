@@ -23,7 +23,7 @@ trait HasMagicProperties
     public function magicGet($name)
     {
         $method = function ($name) {
-            return '__get'. ucfirst($name);
+            return '__get'. $this->convertToCamelCase($name);
         };
 
         if (key_exists($name, $this->getParsedDocBlock()) &&
@@ -40,12 +40,16 @@ trait HasMagicProperties
     public function magicSet($name, $value)
     {
         $method = function ($name) {
-            return '__set'. ucfirst($name);
+            return '__set'. $this->convertToCamelCase($name);
         };
 
         if (key_exists($name, $this->getParsedDocBlock()) &&
             in_array($this->getParsedDocBlock()[$name]['access'], ['property', 'property-write'])) {
-            //Check the types too
+            if (method_exists($this, $method($name))) {
+                $this->{$method($name)}($value);
+                return ;
+            }
+            //Check the types
             if (!$this->validateTypes($value, $this->getParsedDocBlock()[$name]['types'])) {
                 throw new \TypeError(__METHOD__.": Property '$$name' must be of type(s) ". implode('|', $this->getParsedDocBlock()[$name]['types']));
             }
@@ -62,7 +66,7 @@ trait HasMagicProperties
     public function magicIsset($name): bool
     {
         $method = function ($name) {
-            return '__isset'. ucfirst($name);
+            return '__isset'. $this->convertToCamelCase($name);
         };
 
         if (key_exists($name, $this->getParsedDocBlock()) &&
@@ -79,7 +83,7 @@ trait HasMagicProperties
     public function magicUnset($name)
     {
         $method = function ($name) {
-            return '__unset'. ucfirst($name);
+            return '__unset'. $this->convertToCamelCase($name);
         };
         if (key_exists($name, $this->getParsedDocBlock()) &&
             in_array($this->getParsedDocBlock()[$name]['access'], ['property', 'property-write'])) {
@@ -90,6 +94,13 @@ trait HasMagicProperties
         } else {
             $this->throwUndefinedPropertyException($name);
         }
+    }
+
+    private function convertToCamelCase(string $name): string
+    {
+        return array_reduce(array_map('ucfirst',explode('_', $name)), function ($carry, $item) {
+            return $carry . $item;
+        });
     }
 
     protected function throwUndefinedPropertyException($name)
