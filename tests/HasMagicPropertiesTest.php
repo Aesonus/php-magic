@@ -81,10 +81,10 @@ class HasMagicPropertiesTest extends BaseTestCase
      * @test
      * @dataProvider validMagicGetUsingMethodsDataProvider
      */
-    public function magicGetCalls__getPropertyUsingMethods($property)
+    public function magicGetCalls__getPropertyUsingMethods($property, $calls)
     {
         $this->setUpMagicByMethods();
-        $this->testObj->expects($this->once())->method("__get" . ucfirst($property))->with();
+        $this->testObj->expects($this->once())->method("__get" . $calls)->with();
         $this->testObj->magicGet($property);
     }
 
@@ -107,8 +107,8 @@ class HasMagicPropertiesTest extends BaseTestCase
     public function validMagicGetUsingMethodsDataProvider()
     {
         return [
-            ['property'],
-            ['read_property']
+            ['property', 'Property'],
+            ['read_property', 'ReadProperty']
         ];
     }
 
