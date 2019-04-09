@@ -25,6 +25,10 @@ trait HasInheritedMagicProperties
         while ($class = get_parent_class($class)) {
             $parsers[] = new \DocBlockReader\Reader($class);
         }
+        //Get any interfaces too
+        foreach (class_implements(get_class()) as $interface) {
+            $parsers[] = new \DocBlockReader\Reader($interface);
+        }
         return $parsers;
     }
 }
