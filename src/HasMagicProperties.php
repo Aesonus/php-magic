@@ -111,7 +111,7 @@ trait HasMagicProperties
     protected function validateTypes($value, array $types): bool
     {
         foreach ($types as $type) {
-            if (class_exists($type) && $value instanceof $type) {
+            if ((class_exists($type) || interface_exists($type)) && $value instanceof $type) {
                 return true;
             } elseif ($type === 'mixed') {
                 return true;
