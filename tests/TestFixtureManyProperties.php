@@ -11,20 +11,22 @@
 namespace Aesonus\Tests;
 
 use Aesonus\PhpMagic\HasMagicProperties;
+use Aesonus\PhpMagic\ImplementsMagicMethods;
+use Aesonus\Tests\Fixtures\FixtureClassProperty;
 
 /**
  * @property ?string $testStringOrNullProperty
  * @property float|string   $testFloatOrStringProperty
  * @property-read int $testIntReadProperty
  * @property-read callable|object $testCallableOrObjectReadProperty
- * @property-write \stdClass|null $testStdClassOrNullWriteProperty
+ * @property-write FixtureClassProperty|null $testNamespacedClassOrNullWriteProperty
  * @property-write mixed $testMixedWriteProperty
  * @author Aesonus <corylcomposinger at gmail.com>
  */
 class TestFixtureManyProperties
 {
     use HasMagicProperties;
-    use \Aesonus\PhpMagic\ImplementsMagicMethods;
+    use ImplementsMagicMethods;
 
     /**
      * @var array Use to access the protected properties on this object. For
@@ -36,7 +38,7 @@ class TestFixtureManyProperties
     protected $testFloatOrStringProperty;
     protected $testIntReadProperty;
     protected $testCallableOrObjectReadProperty;
-    protected $testStdClassOrNullWriteProperty;
+    protected $testNamespacedClassOrNullWriteProperty;
     protected $testMixedWriteProperty;
 
     protected $notMagicProperty = 'not accessible';
@@ -48,7 +50,7 @@ class TestFixtureManyProperties
             'testFloatOrStringProperty' => &$this->testFloatOrStringProperty,
             'testIntReadProperty' => &$this->testIntReadProperty,
             'testCallableOrObjectReadProperty' => &$this->testCallableOrObjectReadProperty,
-            'testStdClassOrNullWriteProperty' => &$this->testStdClassOrNullWriteProperty,
+            'testNamespacedClassOrNullWriteProperty' => &$this->testNamespacedClassOrNullWriteProperty,
             'testMixedWriteProperty' => &$this->testMixedWriteProperty,
         ];
     }

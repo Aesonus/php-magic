@@ -18,16 +18,16 @@ trait HasInheritedMagicProperties
 {
     use HasMagicProperties;
 
-    protected function getParserObjects(): array
+    protected function getClassesToParse(): array
     {
         $class = get_class();
-        $parsers = [new \DocBlockReader\Reader($class)];
+        $parsers = [$class];
         while ($class = get_parent_class($class)) {
-            $parsers[] = new \DocBlockReader\Reader($class);
+            $parsers[] = $class;
         }
         //Get any interfaces too
         foreach (class_implements(get_class()) as $interface) {
-            $parsers[] = new \DocBlockReader\Reader($interface);
+            $parsers[] = $interface;
         }
         return $parsers;
     }

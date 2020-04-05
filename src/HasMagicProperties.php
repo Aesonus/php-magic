@@ -11,6 +11,10 @@
 namespace Aesonus\PhpMagic;
 
 use DocBlockReader\Reader;
+use Error;
+use Kdyby\ParseUseStatements\UseStatements;
+use RuntimeException;
+use TypeError;
 
 /**
  * Allows for magic getters and setters to be generated from class doc blocks
@@ -19,6 +23,11 @@ use DocBlockReader\Reader;
 trait HasMagicProperties
 {
     protected $definedProperties;
+    /**
+     * 
+     * @var array
+     */
+    private $uses;
 
     public function magicGet($name)
     {
@@ -51,7 +60,7 @@ trait HasMagicProperties
             }
             //Check the types
             if (!$this->validateTypes($value, $this->getParsedDocBlock()[$name]['types'])) {
-                throw new \TypeError(__METHOD__.": Property '$$name' must be of type(s) ". implode('|', $this->getParsedDocBlock()[$name]['types']));
+                throw new TypeError(__METHOD__.": Property '$$name' must be of type(s) ". implode('|', $this->getParsedDocBlock()[$name]['types']) . " " . gettype($value) . ' given');
             }
             if (method_exists($this, $method($name))) {
                 $this->{$method($name)}($value);
@@ -105,7 +114,7 @@ trait HasMagicProperties
 
     protected function throwUndefinedPropertyException($name)
     {
-        throw new \Error("Undefined property: " . __CLASS__ . "::$$name");
+        throw new Error("Undefined property: " . __CLASS__ . "::$$name");
     }
 
     protected function validateTypes($value, array $types): bool
@@ -115,7 +124,7 @@ trait HasMagicProperties
                 return true;
             } elseif ($type === 'mixed') {
                 return true;
-            } elseif (call_user_func("is_$type", $value)) {
+            } elseif (function_exists("is_$type") && call_user_func("is_$type", $value)) {
                 return true;
             }
         }
@@ -131,8 +140,7 @@ trait HasMagicProperties
                 ];
         if (!isset($this->definedProperties)) {
             $this->definedProperties = [];
-            foreach ($this->getParserObjects() as $parser) {
-
+            foreach ($this->getParserObjects() as $i => $parser) {
                 $parameters = array_filter($parser->getParameters(), function ($value) use ($allowed_annotations) {
                     return in_array($value, $allowed_annotations);
                 }, ARRAY_FILTER_USE_KEY);
@@ -173,20 +181,51 @@ trait HasMagicProperties
             $types[] = 'null';
             $type_string = substr($type_string, 1);
         } elseif (stripos($type_string, '?') > 0) {
-            throw new \RuntimeException("Invalid property types: $type_string");
+            throw new RuntimeException("Invalid property types: $type_string");
         }
-        $types = array_merge($types, explode('|', $type_string));
+        $types = array_merge($types, array_map([$this, 'getFQCNFor'], explode('|', $type_string)));
         return $types;
     }
 
     /**
      * This method gets the parsing object(s).
      *
-     * This method can be overridden. See HasInheritedMagicProperties.php to see a use case.
      * @return array
      */
-    protected function getParserObjects(): array
+    private function getParserObjects(): array
     {
-        return [new Reader(get_class())];
+        return array_map(function ($item) {
+            return new Reader($item);
+        }, $this->getClassesToParse());
+    }
+    
+    /**
+     * This method gets all the use statements for this class
+     * @param string $type
+     * @return string
+     */
+    protected function getFQCNFor(string $type): string
+    {
+        if (!isset($this->uses)) {
+            $classes = $this->getClassesToParse();
+            $uses = [];
+            foreach ($classes as $key => $class) {
+                $uses = array_merge($uses, UseStatements::getUseStatements(new \ReflectionClass($class)));
+            }
+            $this->uses = $uses;
+        }
+        
+        return $this->uses[$type] ?? $type;
+    }
+    
+    /**
+     * This method returns all the classes to parse
+     * 
+     * This method can be overridden to add more classes. See HasInheritedMagicProperties.php to see a use case.
+     * @return array
+     */
+    protected function getClassesToParse(): array
+    {
+        return [get_class()];
     }
 }

@@ -45,7 +45,7 @@ class HasInheritedMagicPropertiesTest extends \Aesonus\TestLib\BaseTestCase
             ['testStringOrNullProperty', null],
             ['testFloatOrStringProperty', 'string value'],
             ['testFloatOrStringProperty', 3.14159],
-            ['testStdClassOrNullWriteProperty', new \stdClass()],
+            ['testNamespacedClassOrNullWriteProperty', new Fixtures\FixtureClassProperty()],
             ['testMixedWriteProperty', 4.3]
         ];
     }

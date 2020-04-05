@@ -36,6 +36,8 @@ class HasMagicPropertiesTest extends BaseTestCase
         '__unsetProperty',
         '__getProperty',
         '__issetProperty',
+        '__getReadProperty',
+        '__issetReadProperty',
         '__unsetWrite',
         '__setWrite',
         '__issetRead',
@@ -157,7 +159,7 @@ class HasMagicPropertiesTest extends BaseTestCase
     {
         return [
             ['notMagicProperty'],
-            ['testStdClassOrNullWriteProperty']
+            ['testNamespacedClassOrNullWriteProperty']
         ];
     }
 
@@ -203,10 +205,10 @@ class HasMagicPropertiesTest extends BaseTestCase
      * @test
      * @dataProvider validMagicGetUsingMethodsDataProvider
      */
-    public function magicIssetCalls__issetPropertyUsingMethods($property)
+    public function magicIssetCalls__issetPropertyUsingMethods($property, $calls)
     {
         $this->setUpMagicByMethods();
-        $this->testObj->expects($this->once())->method("__isset" . ucfirst($property))
+        $this->testObj->expects($this->once())->method("__isset" . $calls)
             ->with()->willReturn(true);
         $this->testObj->magicIsset($property);
     }
@@ -246,7 +248,7 @@ class HasMagicPropertiesTest extends BaseTestCase
             ['testStringOrNullProperty', null],
             ['testFloatOrStringProperty', 'string value'],
             ['testFloatOrStringProperty', 3.14159],
-            ['testStdClassOrNullWriteProperty', new \stdClass()],
+            ['testNamespacedClassOrNullWriteProperty', new Fixtures\FixtureClassProperty()],
             ['testMixedWriteProperty', 4.3]
         ];
     }
@@ -376,7 +378,7 @@ class HasMagicPropertiesTest extends BaseTestCase
         return [
             ['testStringOrNullProperty'],
             ['testStringOrNullProperty'],
-            ['testStdClassOrNullWriteProperty'],
+            ['testNamespacedClassOrNullWriteProperty'],
             ['testMixedWriteProperty'],
         ];
     }
