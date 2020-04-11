@@ -27,22 +27,30 @@ Basic Use Case:
 
 ```php
 class MyClass {
-...
+    use HasMagicProperties;
+    // or
+    use HasInheritedMagicProperties;
 }
 ```
 
-2. Add properties to docblock using phpdoc formatted docblocks and define object properties
+2. Add properties to docblock using phpdoc formatted docblocks and define object properties of the same name
 
 ```php
+use \stdClass;
+
 /**
+ * Yup, the question mark can be used to indicate null
  * @property ?string $testStringOrNullProperty Optional description
+ * The | can validate using 'or'
  * @property float|string   $testFloatOrStringProperty
  * @property-read int $testIntReadProperty
  * @property-read callable|object $testCallableOrObjectReadProperty
- * @property-write \stdClass|null $testStdClassOrNullWriteProperty
+ * @property-write stdClass|null $testStdClassOrNullWriteProperty
  * @property-write mixed $testMixedWriteProperty
  */
 class MyClass {
+    use HasMagicProperties;
+
     protected $testStringOrNullProperty;
     protected $testFloatOrStringProperty;
     protected $testIntReadProperty;
@@ -53,47 +61,63 @@ class MyClass {
 }
 ```
 
-3. Create magic methods and make them call the corresponding magic* methods (TIP: There is
+3. Create magic methods and make them call the corresponding magic[Get|Isset|Set|Unset] methods (TIP: There is
 no need to implement all the magic methods if you don't need to)
+
+In this example we set up the magic property methods ourselves
 
 ```php
 /**
- * ...
- */
+* ...
+*/
 class MyClass {
-    
+    use HasMagicProperties;
+
     /**
-     * Only readable properties will be read (@property or @property-read)
-     */
+    * Only readable properties will be read (@property or @property-read)
+    */
     public function __get($name)
     {
         return $this->magicGet($name);
     }
 
     /**
-     * Only readable properties will be read (@property or @property-read)
-     */
+    * Only readable properties will be read (@property or @property-read)
+    */
     public function __isset($name)
     {
         return $this->magicIsset($name);
     }
     
     /**
-     * Only writable properties will be set (@property or @property-write)
-     */
+    * Only writable properties will be set (@property or @property-write)
+    */
     public function __set($name, $value)
     {
         $this->magicSet($name, $value);
     }
     
     /**
-     * Only writeable properties will be set (@property or @property-write)
-     */
+    * Only writeable properties will be set (@property or @property-write)
+    */
     public function __unset($name)
     {
         $this->magicUnset($name);
     }
     
+    ...
+}
+```
+
+You may also use the ImplementsMagicMethods trait to just implement all of the magic functions automatically
+
+```php
+/**
+* ...
+*/
+class MyClass {
+    use HasMagicProperties;
+    use ImplementsMagicMethods;
     ...
 }
 ```
@@ -127,7 +151,20 @@ class MyClass {
 ---------------
 
 The trait will use the type(s) defined in the doc block to validate the input. It currently
-supports any type that can be called by is_int, is_bool, etc; and any fully qualified class
-names.
+supports any type that can be called by is_int, is_bool, etc; and any class that you may desire.
 
-Currently, there is no support for use statements.
+The following example validates the parameter as a class My\Namespace\Foo or My\Other\Namespace\Bar
+
+```php 
+use My\Namespace\Foo;
+use My\Other\Namspace\Bar;
+
+/**
+ *
+ * @property $myClass Foo|Bar
+ */
+class MyClass {
+
+}
+
+```
