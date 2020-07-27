@@ -20,7 +20,7 @@ trait HasInheritedMagicProperties
 
     protected function getClassesToParse(): array
     {
-        $class = get_class();
+        $class = get_class($this);
         $parsers = [$class];
         while ($class = get_parent_class($class)) {
             $parsers[] = $class;
