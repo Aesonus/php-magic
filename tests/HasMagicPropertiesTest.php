@@ -68,8 +68,19 @@ class HasMagicPropertiesTest extends BaseTestCase
 
     private function setUpMagicByMethods()
     {
+        $setMethods = array_merge(
+            [
+                //The following is used to override the default method, which is to 
+                //get the current class's docblock, but since it will be a mock, they
+                //won't exist
+                'getClassesToParse'
+            ],
+            $this->magicByMethodsMethods
+        );
         $this->testObj = $this->getMockBuilder(TestFixtureUsingMethods::class)
-                ->setMethods($this->magicByMethodsMethods)->getMock();
+                ->setMethods($setMethods)->getMock();
+        $this->testObj->expects($this->any())->method('getClassesToParse')
+            ->willReturn([TestFixtureUsingMethods::class]);
     }
 
     private function expectNoMethodCalls()

@@ -138,21 +138,22 @@ trait HasMagicProperties
                     'property-read',
                     'property-write'
                 ];
-        if (!isset($this->definedProperties)) {
-            $this->definedProperties = [];
-            foreach ($this->getParserObjects() as $i => $parser) {
-                $parameters = array_filter($parser->getParameters(), function ($value) use ($allowed_annotations) {
-                    return in_array($value, $allowed_annotations);
-                }, ARRAY_FILTER_USE_KEY);
-                foreach ($parameters as $access => $docs) {
-                    if (!is_array($docs)) {
-                        $docs = [$docs];
-                    }
-                    $this->definedProperties = array_merge(
-                        $this->definedProperties,
-                        $this->getPropertyInfo($access, $docs)
-                    );
+        if (isset($this->definedProperties)) {
+            return $this->definedProperties;
+        }
+        $this->definedProperties = [];
+        foreach ($this->getParserObjects() as $i => $parser) {
+            $parameters = array_filter($parser->getParameters(), function ($value) use ($allowed_annotations) {
+                return in_array($value, $allowed_annotations);
+            }, ARRAY_FILTER_USE_KEY);
+            foreach ($parameters as $access => $docs) {
+                if (!is_array($docs)) {
+                    $docs = [$docs];
                 }
+                $this->definedProperties = array_merge(
+                    $this->definedProperties,
+                    $this->getPropertyInfo($access, $docs)
+                );
             }
         }
         return $this->definedProperties;
@@ -226,6 +227,6 @@ trait HasMagicProperties
      */
     protected function getClassesToParse(): array
     {
-        return [get_class($this)];
+        return [static::class];
     }
 }
